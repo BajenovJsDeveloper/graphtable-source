@@ -1,0 +1,10 @@
+#load{
+	animation-name: rotate;
+	animation-duration: 2s;
+	animation-iteration-count: infinite;
+	font-size: 3rem;
+}
+
+@keyframes rotate{
+	50%{transform: rotate(360deg)}
+}

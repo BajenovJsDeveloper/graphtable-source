@@ -1,0 +1,51 @@
+div{
+	box-sizing: border-box;
+}
+
+.App{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	width: 100vw;
+	flex-wrap: wrap;
+}
+
+.App__graphic{
+	min-width: 400px;
+	min-height: 200px;
+	text-align: center;
+	padding: 20px;
+}
+.App__graph-container{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+}
+.App__table{
+	padding-top: 50px;
+	width: 90%;
+}
+.paginator__arrows{
+	width: 100%;
+}
+.date-picker{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 200;
+	background-color: rgba(0, 0, 0, 0.8);
+	animation-duration: 0.5s;
+	animation-name: fadeIn;
+}
+
+@keyframes fadeIn{
+	0%{opacity: 0}
+	100%{opacity: 1}
+}

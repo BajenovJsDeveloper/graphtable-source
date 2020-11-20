@@ -11,22 +11,17 @@ const useStyles = makeStyles({
   },
 });
 
-function FilterButton({ isFilterActive, onFilterSort, onFilterReset }) {
+function FilterButton({ onFilterSort, onFilterReset }) {
   const classes = useStyles();
   const [isShow, setIsShow] = useState(false);
-  const [date, setNewDate] = useState(new Date());
-
+  const date = new Date();
   const handleClick = () => {
-    if (isFilterActive) {
-      onFilterReset();
-    } else {
-      setIsShow((prev) => !prev);
-    }
+
+    setIsShow(true);
   };
-  const onSelect = (dateChanged) => {
+  const onSelect = (dateRange) => {
     setIsShow(false);
-    setNewDate(dateChanged);
-    onFilterSort(dateChanged);
+    onFilterSort(dateRange);
   };
   const onCancel = () => {
     setIsShow(false);
@@ -38,12 +33,13 @@ function FilterButton({ isFilterActive, onFilterSort, onFilterReset }) {
         disabled={false}
         aria-label="Filter"
         className={classes.filterIcon}
+        title="Filter by date"
       >
-        <FilterListIcon color={!isFilterActive ? "disabled" : "secondary"} />
+        <FilterListIcon color="primary"/>
       </IconButton>
-      {isShow && !isFilterActive && (
+      {isShow && (
         <div className="date-picker">
-          <DatePicker date={date} onSelect={onSelect} onCancel={onCancel}/>
+           <DatePicker date={date} onSelect={onSelect} onCancel={onCancel}/>
         </div>
       )}
     </React.Fragment>

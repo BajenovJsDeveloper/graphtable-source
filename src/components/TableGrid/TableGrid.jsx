@@ -19,6 +19,10 @@ const PP_1 = 10;
 const PP_2 = 25;
 const PP_3 = 50;
 const PP_4 = 100;
+const sign = {
+  left: '',
+  right: 'mdl'
+}
 
 const useStyles = makeStyles({
   table: {
@@ -32,13 +36,32 @@ const useStyles = makeStyles({
     padding: "8px 0",
   },
   tableTD: {
-    color: "#c1c1c1",
+    color: "gray",
     padding: "3px",
+    "&>p": {
+      padding: 0,
+      margin: 0,
+
+    },
+    "&>p:last-child":{
+      color: "#c1c1c1",
+      fontSize: '0.8em'
+    }
   },
   tableBG: {
     backgroundColor: "#e0e0e0",
   },
 });
+
+function getDateToString(date){
+  const newDate = new Date(date);
+  return newDate.toLocaleDateString();
+}
+function getTimeToString(date){
+  const newDate = new Date(date);
+  return newDate.toLocaleTimeString();
+}
+
 
 export default function TableGrid(props) {
   const {
@@ -48,13 +71,12 @@ export default function TableGrid(props) {
     onChangePerPage,
     onFilterSort,
     paginator,
-    isFilterActive,
     onFilterReset,
   } = props;
 
   const [dirSort, setDirSort] = useState({
     sender: "desc",
-    id: "desc",
+    id: "asc",
     date: "desc",
     debit: "desc",
     credit: "desc",
@@ -78,25 +100,17 @@ export default function TableGrid(props) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead className={classes.tableBG}>
           <TableRow>
-            <TableCell className={classes.tableTH} align="left">
-              <SortingIcon
-                active={dirSort.active}
-                name="sender"
-                direction={dirSort.sender}
-                clickSort={handleLastSorting}
-              />
-              Sender
-            </TableCell>
-            <TableCell className={classes.tableTH} align="left">
+            <TableCell className={classes.tableTH} align="center" title="Sorting by id number">
               <SortingIcon
                 active={dirSort.active}
                 name="id"
                 direction={dirSort.id}
                 clickSort={handleLastSorting}
+                title="Sorting by id number"
               />
               Transaction ID
             </TableCell>
-            <TableCell className={classes.tableTH} align="left">
+            <TableCell className={classes.tableTH} align="left" title="Sorting by date">
               <SortingIcon
                 active={dirSort.active}
                 name="date"
@@ -105,7 +119,7 @@ export default function TableGrid(props) {
               />
               Date
             </TableCell>
-            <TableCell className={classes.tableTH} align="left">
+            <TableCell className={classes.tableTH} align="right" title="Sorting debit">
               <SortingIcon
                 active={dirSort.active}
                 name="debit"
@@ -114,7 +128,7 @@ export default function TableGrid(props) {
               />
               Debet Amount
             </TableCell>
-            <TableCell className={classes.tableTH} align="left">
+            <TableCell className={classes.tableTH} align="right" title="Sorting by credit">
               <SortingIcon
                 active={dirSort.active}
                 name="credit"
@@ -122,10 +136,18 @@ export default function TableGrid(props) {
                 clickSort={handleLastSorting}
               />
               Credit Amount
+            </TableCell>
+            <TableCell className={classes.tableTH} align="center" title="Sorting by sender">
+              <SortingIcon
+                active={dirSort.active}
+                name="sender"
+                direction={dirSort.sender}
+                clickSort={handleLastSorting}
+              />
+              Sender
               <FilterButton
                 onFilterSort={onFilterSort}
                 onFilterReset={onFilterReset}
-                isFilterActive={isFilterActive}
               />
             </TableCell>
           </TableRow>
@@ -133,18 +155,21 @@ export default function TableGrid(props) {
         <TableBody>
           {rowsPageData.map((row) => (
             <TableRow key={row.transactionID}>
-              <TableCell className={classes.tableTD}>{row.sender}</TableCell>
-              <TableCell className={classes.tableTD} align="left">
+              <TableCell className={classes.tableTD} align="center">
                 {row.transactionID}
               </TableCell>
               <TableCell className={classes.tableTD} align="left">
-                {new Date(row.date).toLocaleString()}
+                <p>{getDateToString(row.date)}</p>
+                <p>{getTimeToString(row.date)}</p>
               </TableCell>
-              <TableCell className={classes.tableTD} align="left">
-                {row.debitAmount}
+              <TableCell className={classes.tableTD} align="right">
+                {`${sign.left} ${row.debitAmount} ${sign.right}`}
               </TableCell>
-              <TableCell className={classes.tableTD} align="left">
-                {row.creditAmount}
+              <TableCell className={classes.tableTD} align="right">
+                {`${sign.left} ${row.creditAmount} ${sign.right}`}
+              </TableCell>
+              <TableCell className={classes.tableTD} align="center">
+                {row.sender}
               </TableCell>
             </TableRow>
           ))}
@@ -162,9 +187,7 @@ export default function TableGrid(props) {
               colSpan={5}
               count={paginator.count}
               rowsPerPage={
-                paginator.perPage === ALL_PAGES
-                  ? paginator.count
-                  : paginator.perPage
+                paginator.perPage 
               }
               page={paginator.page}
               SelectProps={{

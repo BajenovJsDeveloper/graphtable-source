@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Graph from "./Graph";
+import Graph from "./components/Graph.js";
 //import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(<Graph />, document.getElementById("root"));

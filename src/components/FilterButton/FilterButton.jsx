@@ -11,12 +11,11 @@ const useStyles = makeStyles({
   },
 });
 
-function FilterButton({ onFilterSort, onFilterReset }) {
+function FilterButton({ onFilterSort }) {
   const classes = useStyles();
   const [isShow, setIsShow] = useState(false);
   const date = new Date();
   const handleClick = () => {
-
     setIsShow(true);
   };
   const onSelect = (dateRange) => {
@@ -25,7 +24,7 @@ function FilterButton({ onFilterSort, onFilterReset }) {
   };
   const onCancel = () => {
     setIsShow(false);
-  }
+  };
   return (
     <React.Fragment>
       <IconButton
@@ -35,11 +34,11 @@ function FilterButton({ onFilterSort, onFilterReset }) {
         className={classes.filterIcon}
         title="Filter by date"
       >
-        <FilterListIcon color="primary"/>
+        <FilterListIcon color="primary" />
       </IconButton>
       {isShow && (
         <div className="date-picker">
-           <DatePicker date={date} onSelect={onSelect} onCancel={onCancel}/>
+          <DatePicker date={date} onSelect={onSelect} onCancel={onCancel} />
         </div>
       )}
     </React.Fragment>

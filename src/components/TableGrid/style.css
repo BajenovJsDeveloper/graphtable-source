@@ -1,3 +1,19 @@
 .MuiTableRow-root{
 		font-size: 6px;
 }
+.filter{
+	display: flex;
+	align-items: center;
+}
+.date__container{
+	display: flex;
+	width: fit-content;
+	background-color: rgba(255, 255, 255, 0.431);
+	border-radius: 5px;
+}
+.date__label{
+	color: rgba(158, 158, 158, 1);
+}
+.date__label,.date__range{
+	padding: 0 10px;
+}

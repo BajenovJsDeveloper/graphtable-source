@@ -16,6 +16,7 @@ div{
 	text-align: center;
 	padding: 20px;
 }
+
 .App__graph-container{
 	display: flex;
 	flex-direction: row;
@@ -27,9 +28,11 @@ div{
 	padding-top: 50px;
 	width: 90%;
 }
+
 .paginator__arrows{
 	width: 100%;
 }
+
 .date-picker{
 	position: fixed;
 	top: 0;

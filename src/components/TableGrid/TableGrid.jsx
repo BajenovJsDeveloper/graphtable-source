@@ -12,6 +12,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 import Paper from "@material-ui/core/Paper";
 import FilterButton from "../FilterButton/FilterButton";
 import SortingIcon from "../SortingIcon/SortingIcon";
+import Box from "@material-ui/core/Box";
 import "./style.css";
 
 const ALL_PAGES = -1;
@@ -20,9 +21,9 @@ const PP_2 = 25;
 const PP_3 = 50;
 const PP_4 = 100;
 const sign = {
-  left: '',
-  right: 'mdl'
-}
+  left: "",
+  right: "mdl",
+};
 
 const useStyles = makeStyles({
   table: {
@@ -41,27 +42,31 @@ const useStyles = makeStyles({
     "&>p": {
       padding: 0,
       margin: 0,
-
     },
-    "&>p:last-child":{
+    "&:first-child": {
+      paddingRight: 30,
+    },
+    "&:nth-child(2)": {
+      width: 100,
+    },
+    "&>p:last-child": {
       color: "#c1c1c1",
-      fontSize: '0.8em'
-    }
+      fontSize: "0.8em",
+    },
   },
   tableBG: {
     backgroundColor: "#e0e0e0",
   },
 });
 
-function getDateToString(date){
+function getDateToString(date) {
   const newDate = new Date(date);
   return newDate.toLocaleDateString();
 }
-function getTimeToString(date){
+function getTimeToString(date) {
   const newDate = new Date(date);
   return newDate.toLocaleTimeString();
 }
-
 
 export default function TableGrid(props) {
   const {
@@ -71,7 +76,7 @@ export default function TableGrid(props) {
     onChangePerPage,
     onFilterSort,
     paginator,
-    onFilterReset,
+    dateRange,
   } = props;
 
   const [dirSort, setDirSort] = useState({
@@ -89,6 +94,29 @@ export default function TableGrid(props) {
     return dir === "asc" ? "desc" : "asc";
   };
 
+  const toNumberWithPrfix = (str, sign) => {
+    if (Number(str) > 0)
+      return `${sign.left.toUpperCase()} ${str} ${sign.right.toUpperCase()}`;
+    else return "-";
+  };
+
+  const dateValueToString = (dateValue) => {
+    return new Date(dateValue).toLocaleDateString();
+  };
+
+  const toNumberSpacedString = (num) => {
+    let numFormated = num.toFixed(2).split(".");
+    let fix = numFormated[0].split("").reverse();
+    let float = numFormated[1];
+    fix = fix.map((digit, idx) =>
+      idx % 3 === 0 && idx > 0 ? `${digit} ` : digit
+    );
+    fix = fix.reverse().join("");
+    numFormated[0] = fix;
+    numFormated[1] = float;
+    return numFormated.join(".");
+  };
+
   const handleLastSorting = (fieldName) => {
     let dir = reversDirArrow(dirSort[fieldName]);
     setDirSort((prev) => ({ ...prev, [fieldName]: dir, active: fieldName }));
@@ -100,7 +128,37 @@ export default function TableGrid(props) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead className={classes.tableBG}>
           <TableRow>
-            <TableCell className={classes.tableTH} align="center" title="Sorting by id number">
+            <TableCell
+              colSpan={2}
+              className={classes.tableTH}
+              align="right"
+              title="Filter"
+            >
+              <Box className="filter">
+                <FilterButton onFilterSort={onFilterSort} />
+                <Box className="date__container">
+                  <div className="date__label">Date range:</div>
+                  <div className="date__range">
+                    {`${dateValueToString(
+                      dateRange.start
+                    )} - ${dateValueToString(dateRange.end)}`}
+                  </div>
+                </Box>
+              </Box>
+            </TableCell>
+            <TableCell
+              p={2}
+              colSpan={3}
+              className={classes.tableTH}
+              align="left"
+            ></TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell
+              className={classes.tableTH}
+              align="center"
+              title="Sorting by id number"
+            >
               <SortingIcon
                 active={dirSort.active}
                 name="id"
@@ -110,7 +168,11 @@ export default function TableGrid(props) {
               />
               Transaction ID
             </TableCell>
-            <TableCell className={classes.tableTH} align="left" title="Sorting by date">
+            <TableCell
+              className={classes.tableTH}
+              align="center"
+              title="Sorting by date"
+            >
               <SortingIcon
                 active={dirSort.active}
                 name="date"
@@ -119,7 +181,11 @@ export default function TableGrid(props) {
               />
               Date
             </TableCell>
-            <TableCell className={classes.tableTH} align="right" title="Sorting debit">
+            <TableCell
+              className={classes.tableTH}
+              align="right"
+              title="Sorting debit"
+            >
               <SortingIcon
                 active={dirSort.active}
                 name="debit"
@@ -128,7 +194,11 @@ export default function TableGrid(props) {
               />
               Debet Amount
             </TableCell>
-            <TableCell className={classes.tableTH} align="right" title="Sorting by credit">
+            <TableCell
+              className={classes.tableTH}
+              align="right"
+              title="Sorting by credit"
+            >
               <SortingIcon
                 active={dirSort.active}
                 name="credit"
@@ -137,7 +207,11 @@ export default function TableGrid(props) {
               />
               Credit Amount
             </TableCell>
-            <TableCell className={classes.tableTH} align="center" title="Sorting by sender">
+            <TableCell
+              className={classes.tableTH}
+              align="center"
+              title="Sorting by sender"
+            >
               <SortingIcon
                 active={dirSort.active}
                 name="sender"
@@ -145,28 +219,27 @@ export default function TableGrid(props) {
                 clickSort={handleLastSorting}
               />
               Sender
-              <FilterButton
-                onFilterSort={onFilterSort}
-                onFilterReset={onFilterReset}
-              />
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rowsPageData.map((row) => (
             <TableRow key={row.transactionID}>
-              <TableCell className={classes.tableTD} align="center">
+              <TableCell className={classes.tableTD} align="right">
                 {row.transactionID}
               </TableCell>
-              <TableCell className={classes.tableTD} align="left">
+              <TableCell className={classes.tableTD} align="right">
                 <p>{getDateToString(row.date)}</p>
                 <p>{getTimeToString(row.date)}</p>
               </TableCell>
               <TableCell className={classes.tableTD} align="right">
-                {`${sign.left} ${row.debitAmount} ${sign.right}`}
+                {toNumberWithPrfix(toNumberSpacedString(row.debitAmount), sign)}
               </TableCell>
               <TableCell className={classes.tableTD} align="right">
-                {`${sign.left} ${row.creditAmount} ${sign.right}`}
+                {toNumberWithPrfix(
+                  toNumberSpacedString(row.creditAmount),
+                  sign
+                )}
               </TableCell>
               <TableCell className={classes.tableTD} align="center">
                 {row.sender}
@@ -186,9 +259,7 @@ export default function TableGrid(props) {
               ]}
               colSpan={5}
               count={paginator.count}
-              rowsPerPage={
-                paginator.perPage 
-              }
+              rowsPerPage={paginator.perPage}
               page={paginator.page}
               SelectProps={{
                 inputProps: { "aria-label": "Records per page" },

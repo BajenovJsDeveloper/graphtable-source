@@ -24,7 +24,7 @@ const ALL_PAGES = -1;
 function creatGraph(itemId, values) {
   const ctx = document.getElementById(itemId).getContext("2d");
   const labels = values.map((i, index) => i[SENDER]);
-  const chunks =  values.map((i, index) => i[FIELD_VALUE]);
+  const chunks = values.map((i, index) => i[FIELD_VALUE]);
   const chart = new Chart(ctx, {
     type: "pie",
     data: {
@@ -50,28 +50,29 @@ function creatGraph(itemId, values) {
 }
 
 function getPicesOfChart(data, fieldName) {
+  const NUMBER = 1;
   const points = [];
   const name = fieldName === DEBIT ? DEBIT_AMOUNT_FIELD : CREDIT_AMOUNT_FIELD;
   const map = new Map();
-  data.forEach(i => {
-    let sum = 0;
-    if(map.has(i.sender)){
-      sum = map.get(i.sender) + i[name];
-      map.set(i.sender, sum);
-    }
-    else{
-      map.set(i.sender, i[name]);
+  data.forEach((item) => {
+    let sum = 0.0;
+    if (map.has(item.sender)) {
+      sum = map.get(item.sender) + Number.parseFloat(item[name]);
+      map.set(item.sender, sum);
+    } else {
+      map.set(item.sender, item[name]);
     }
   });
-  for(let entry of map){
+  for (let entry of map) {
+    entry[NUMBER] = entry[NUMBER].toFixed(2);
     points.push(entry);
   }
-  points.sort((a,b) => {
-    if(a[SENDER] > b[SENDER]) return 1;
-    if(a[SENDER] < b[SENDER]) return -1;
+  points.sort((a, b) => {
+    if (a[SENDER] > b[SENDER]) return 1;
+    if (a[SENDER] < b[SENDER]) return -1;
     return 0;
-  })
-
+  });
+  console.log(points);
   return points;
 }
 
@@ -117,18 +118,19 @@ function sortingByFieldName(dir, fieldName, rowsPageData) {
 }
 
 function defaultPagination() {
-  return { 
-    page: DEFAULT_PAGE, 
-    perPage: DEFAULT_PER_PAGE, 
-    count: ZERO };
+  return {
+    page: DEFAULT_PAGE,
+    perPage: DEFAULT_PER_PAGE,
+    count: ZERO,
+  };
 }
 
-function createPage(dataList, paginator,){
+function createPage(dataList, paginator) {
   let partialData = [];
   let len = dataList.length;
   let start, count;
   let perPage = paginator.perPage;
-  let page = paginator.page
+  let page = paginator.page;
 
   if (perPage === DEFAULT_PAGE) {
     perPage = DEFAULT_PER_PAGE;
@@ -146,22 +148,24 @@ function createPage(dataList, paginator,){
 }
 
 function Graph() {
-  const [dataList, setData] = useState([])
+  const [dataList, setData] = useState([]);
   const [rowsPageData, setRowsPageData] = useState([]);
   const [paginator, setPaginator] = useState(() => defaultPagination());
   const [isLoading, setLoading] = useState(false);
+  const [dateRange, setDateRange] = useState({
+    start: new Date().toLocaleDateString(),
+    end: new Date().toLocaleDateString(),
+  });
   const showGpaphs = dataList.length > 0 ? true : false;
 
-  const onFilterSort = (dateRange) => {
-    getDataFromServer(URL, dateRange, paginator.perPage,);
-  };
-  const onFilterReset = () => {
+  const onFilterSort = (range) => {
+    getDataFromServer(URL, range);
   };
 
   const handleSorting = (dir, fieldName, rows) => {
     const sortedData = sortingByFieldName(dir, fieldName, dataList);
     setData(sortedData);
-    const newPaginator = { ...paginator, page: 0 }
+    const newPaginator = { ...paginator, page: 0 };
     setRowsPageData(createPage(sortedData, newPaginator));
   };
 
@@ -178,12 +182,12 @@ function Graph() {
     setPaginator(newPginator);
   };
 
-  const getDataFromServer = (url, dateRange, perPage) => {
+  const getDataFromServer = (url, range) => {
     const payload = {
       userName: USER_NAME,
       userPassword: USER_PASSWORD,
     };
-    if(dateRange) payload.dateRange = dateRange;
+    if (range) payload.dateRange = range;
     setLoading(true);
     mockFetch.get(url, payload).then((response) => {
       if (response.status === "ok") {
@@ -196,7 +200,9 @@ function Graph() {
             perPage: prev.perPage,
           }));
           setLoading(false);
-          console.log("from server: ", response);
+          console.log("from server: ", response, range);
+          if (range) setDateRange(range);
+          else if (response.range) setDateRange(response.range);
         }, SERVER_DELAY_TIME);
       } else {
         throw new Error("Something is wrong!!! " + response.message);
@@ -204,11 +210,11 @@ function Graph() {
     });
   };
 
-  useEffect(()=>{
-    if(dataList.length > 0){
+  useEffect(() => {
+    if (dataList.length > 0) {
       setRowsPageData(createPage(dataList, paginator));
     }
-  },[dataList])
+  }, [dataList]);
 
   useEffect(() => {
     getDataFromServer(URL);
@@ -225,17 +231,18 @@ function Graph() {
         destroyCredit();
       };
     }
-  }, [dataList]);
+  }, [dateRange]);
 
   return (
     <div className="App">
       <Loading isLoading={isLoading} />
-      {showGpaphs && 
+      {showGpaphs && (
         <Box
           className="App__graph-container"
           fontFamily="Roboto"
           fontSize={20}
-          p={1}>
+          p={1}
+        >
           <Box className="App__graphic">
             Debit Amount
             <canvas id="chart-credit"></canvas>
@@ -245,7 +252,7 @@ function Graph() {
             <canvas id="chart-debit"></canvas>
           </Box>
         </Box>
-      }
+      )}
       <Box className="App__table">
         <TableGrid
           rowsPageData={rowsPageData}
@@ -254,7 +261,7 @@ function Graph() {
           handleSorting={handleSorting}
           onChangePage={onChangePage}
           onChangePerPage={onChangePerPage}
-          onFilterReset={onFilterReset}
+          dateRange={dateRange}
         />
       </Box>
     </div>

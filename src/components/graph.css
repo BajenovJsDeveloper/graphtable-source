@@ -14,7 +14,8 @@ div{
 	min-width: 400px;
 	min-height: 200px;
 	text-align: center;
-	padding: 20px;
+	color: rgba(169, 169, 169, 1);
+	font-size: 1.8rem;
 }
 
 .App__graph-container{

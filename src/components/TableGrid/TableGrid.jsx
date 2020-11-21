@@ -13,6 +13,7 @@ import Paper from "@material-ui/core/Paper";
 import FilterButton from "../FilterButton/FilterButton";
 import SortingIcon from "../SortingIcon/SortingIcon";
 import Box from "@material-ui/core/Box";
+import { tableAPI } from "../../projectapi/tableapi";
 import "./style.css";
 
 const ALL_PAGES = -1;
@@ -20,10 +21,6 @@ const PP_1 = 10;
 const PP_2 = 25;
 const PP_3 = 50;
 const PP_4 = 100;
-const sign = {
-  left: "",
-  right: "mdl",
-};
 
 const useStyles = makeStyles({
   table: {
@@ -34,7 +31,7 @@ const useStyles = makeStyles({
     color: "#0d218c",
     whiteSpace: "nowrap",
     fontSize: "0.8rem",
-    padding: "8px 0",
+    padding: "3px 10px",
   },
   tableTD: {
     color: "gray",
@@ -45,6 +42,7 @@ const useStyles = makeStyles({
     },
     "&:first-child": {
       paddingRight: 30,
+      width: 100,
     },
     "&:nth-child(2)": {
       width: 100,
@@ -58,15 +56,6 @@ const useStyles = makeStyles({
     backgroundColor: "#e0e0e0",
   },
 });
-
-function getDateToString(date) {
-  const newDate = new Date(date);
-  return newDate.toLocaleDateString();
-}
-function getTimeToString(date) {
-  const newDate = new Date(date);
-  return newDate.toLocaleTimeString();
-}
 
 export default function TableGrid(props) {
   const {
@@ -90,37 +79,10 @@ export default function TableGrid(props) {
 
   const classes = useStyles();
 
-  const reversDirArrow = (dir) => {
-    return dir === "asc" ? "desc" : "asc";
-  };
-
-  const toNumberWithPrfix = (str, sign) => {
-    if (Number(str) > 0)
-      return `${sign.left.toUpperCase()} ${str} ${sign.right.toUpperCase()}`;
-    else return "-";
-  };
-
-  const dateValueToString = (dateValue) => {
-    return new Date(dateValue).toLocaleDateString();
-  };
-
-  const toNumberSpacedString = (num) => {
-    let numFormated = num.toFixed(2).split(".");
-    let fix = numFormated[0].split("").reverse();
-    let float = numFormated[1];
-    fix = fix.map((digit, idx) =>
-      idx % 3 === 0 && idx > 0 ? `${digit} ` : digit
-    );
-    fix = fix.reverse().join("");
-    numFormated[0] = fix;
-    numFormated[1] = float;
-    return numFormated.join(".");
-  };
-
   const handleLastSorting = (fieldName) => {
-    let dir = reversDirArrow(dirSort[fieldName]);
+    let dir = tableAPI.reversDirArrow(dirSort[fieldName]);
     setDirSort((prev) => ({ ...prev, [fieldName]: dir, active: fieldName }));
-    handleSorting(dir, fieldName, rowsPageData);
+    handleSorting(dir, fieldName);
   };
 
   return (
@@ -129,9 +91,9 @@ export default function TableGrid(props) {
         <TableHead className={classes.tableBG}>
           <TableRow>
             <TableCell
-              colSpan={2}
+              colSpan={5}
               className={classes.tableTH}
-              align="right"
+              align="left"
               title="Filter"
             >
               <Box className="filter">
@@ -139,19 +101,13 @@ export default function TableGrid(props) {
                 <Box className="date__container">
                   <div className="date__label">Date range:</div>
                   <div className="date__range">
-                    {`${dateValueToString(
+                    {`${tableAPI.dateValueToString(
                       dateRange.start
-                    )} - ${dateValueToString(dateRange.end)}`}
+                    )} - ${tableAPI.dateValueToString(dateRange.end)}`}
                   </div>
                 </Box>
               </Box>
             </TableCell>
-            <TableCell
-              p={2}
-              colSpan={3}
-              className={classes.tableTH}
-              align="left"
-            ></TableCell>
           </TableRow>
           <TableRow>
             <TableCell
@@ -229,16 +185,17 @@ export default function TableGrid(props) {
                 {row.transactionID}
               </TableCell>
               <TableCell className={classes.tableTD} align="right">
-                <p>{getDateToString(row.date)}</p>
-                <p>{getTimeToString(row.date)}</p>
+                <p>{tableAPI.getDateToString(row.date)}</p>
+                <p>{tableAPI.getTimeToString(row.date)}</p>
               </TableCell>
               <TableCell className={classes.tableTD} align="right">
-                {toNumberWithPrfix(toNumberSpacedString(row.debitAmount), sign)}
+                {tableAPI.toNumberWithPrefix(
+                  tableAPI.toNumberSpacedString(row.debitAmount)
+                )}
               </TableCell>
               <TableCell className={classes.tableTD} align="right">
-                {toNumberWithPrfix(
-                  toNumberSpacedString(row.creditAmount),
-                  sign
+                {tableAPI.toNumberWithPrefix(
+                  tableAPI.toNumberSpacedString(row.creditAmount)
                 )}
               </TableCell>
               <TableCell className={classes.tableTD} align="center">

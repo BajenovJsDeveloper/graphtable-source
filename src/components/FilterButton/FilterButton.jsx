@@ -6,8 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
   filterIcon: {
-    marginLeft: 30,
-    position: "relative",
+    margingRight: 20,
   },
 });
 
@@ -34,7 +33,7 @@ function FilterButton({ onFilterSort }) {
         className={classes.filterIcon}
         title="Filter by date"
       >
-        <FilterListIcon color="primary" />
+        <FilterListIcon color="secondary" />
       </IconButton>
       {isShow && (
         <div className="date-picker">

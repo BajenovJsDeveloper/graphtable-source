@@ -6,10 +6,11 @@ const HOURS_PER_DAY = 24;
 const MINUTES = 0;
 const YEAR = 2020;
 const MONTH = 8;
-const SUMM_INTERVAL = 100.0;
+const SUMM_INTERVAL = 10000.0;
 const DEFAULT_NUM_OF_RECORDS = 10;
-const MAX_RANGE = 15984000000;
+const MAX_DATE_RANGE = 15984000000;
 const START = 0;
+const FLOAT_LENGTH = 2;
 let dTcount = 1;
 
 function getLocalDateValue() {
@@ -30,8 +31,10 @@ class MockData {
   create(numOfRecords = DEFAULT_NUM_OF_RECORDS) {
     const len = this.senders.length;
     for (let i = 1; i <= numOfRecords; i++) {
-      const debitAmount = Math.random() * SUMM_INTERVAL;
-      const creditAmount = Math.random() * SUMM_INTERVAL;
+      let debitAmount = (Math.random() * SUMM_INTERVAL).toFixed(FLOAT_LENGTH);
+      let creditAmount = (Math.random() * SUMM_INTERVAL).toFixed(FLOAT_LENGTH);
+      debitAmount = Number(debitAmount);
+      creditAmount = Number(creditAmount);
       const tranzaction = Math.round(Math.random() * 1);
       this.data.push({
         transactionID: i,
@@ -96,7 +99,6 @@ class MockData {
   }
   determinateSize(data) {
     const chunkData = [...data];
-    console.log("Length ", chunkData.length);
     if (data.length > 200) {
       chunkData.splice(200);
       this.setMessage("Too more data.");
@@ -104,7 +106,7 @@ class MockData {
     return chunkData;
   }
   checkValid(range) {
-    if (Math.abs(range.start - range.end) > MAX_RANGE) return false;
+    if (Math.abs(range.start - range.end) > MAX_DATE_RANGE) return false;
     return true;
   }
 }
@@ -128,13 +130,12 @@ const fetchMock = {
       payload.userPassword === USER_PASSWORD
     ) {
       let filtredData = [];
-      let start;
-      let end;
+      let start = "";
+      let end = "";
       if (payload.dateRange && mockdata.checkValid(payload.dateRange)) {
         filtredData = mockdata.determinateSize(
           mockdata.filterByDate(payload.dateRange)
         );
-        // start = payload.dateRange.start;
       } else {
         filtredData = mockdata.determinateSize(mockdata.filterByDefault());
         end = filtredData[START].date;

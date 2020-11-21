@@ -12,8 +12,11 @@
 	border-radius: 5px;
 }
 .date__label{
-	color: rgba(158, 158, 158, 1);
+	color: rgba(179, 179, 179, 1);
 }
 .date__label,.date__range{
 	padding: 0 10px;
+}
+.date__range{
+	color: rgba(95, 64, 7, 1);
 }

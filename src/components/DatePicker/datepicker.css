@@ -2,7 +2,7 @@
 	background-color: rgba(62, 101, 158, 1);
 }
 .react-datepicker__day-names{
-	color: #ffc107;
+	color: rgba(255, 193, 7, 1);
 }
 .react-datepicker__day-name{
 	color: inherit;

@@ -31,7 +31,7 @@ const useStyles = makeStyles({
     color: "#0d218c",
     whiteSpace: "nowrap",
     fontSize: "0.8rem",
-    padding: "3px 10px",
+    padding: "3px 10px 3px 2px",
   },
   tableTD: {
     color: "gray",

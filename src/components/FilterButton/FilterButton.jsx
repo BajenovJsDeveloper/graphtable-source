@@ -6,7 +6,8 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
   filterIcon: {
-    margingRight: 20,
+    marginRight: 20,
+    padding: 7,
   },
 });
 

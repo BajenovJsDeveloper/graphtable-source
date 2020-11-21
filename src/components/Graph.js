@@ -42,7 +42,7 @@ function Graph() {
     const sortedData = projectAPI.sortingByFieldName(dir, fieldName, dataList);
     setData(sortedData);
     const newPaginator = { ...paginator, page: 0 };
-    setRowsPageData(projectAPI.createPage(sortedData, newPaginator));
+    setPaginator(newPaginator);
   };
 
   const onChangePage = (e, page) => {
